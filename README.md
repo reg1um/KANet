@@ -1,6 +1,8 @@
 # KANet
 Kolmogorov–Arnold Networks Reimplementation
 
+<img width="1000" height="414" alt="image" src="https://github.com/user-attachments/assets/54a2cc8b-532d-47b6-abe2-dd1e12596896" />
+
 ## ROADMAP
 
 ### Mathematical Foundations
