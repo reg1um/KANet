@@ -7,7 +7,7 @@ Kolmogorov–Arnold Networks Reimplementation
 
 ### Mathematical Foundations
 - [X] Implement B-spline basis functions
-- [ ] Add unit tests for B-spline properties
+- [X] Add unit tests for B-spline properties
 - [ ] Implement grid initialization and extension
 - [ ] Test grid boundary handling
 - [ ] Plot B-spline basis functions to verify correctness
