@@ -100,3 +100,16 @@ def test_local_support():
         non_zero_indices == expected_non_zero_indices
     ), f"Expected non-zero indices {expected_non_zero_indices}, \
         got {non_zero_indices}"
+
+
+# Out of Bounds Test
+def test_oob():
+    degree = 3
+    knots = [0, 0, 0, 0, 1, 2, 3, 3, 3, 3]
+    spline = BSplineBasis(knots, degree)
+    u = -0.5  # Out of bounds
+    basis_vector = spline.evaluate(u)
+    expected = [0, 0, 0, 0, 0, 0]
+    assert np.allclose(
+        basis_vector, expected
+    ), f"Expected {expected}, got {basis_vector}"
