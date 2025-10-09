@@ -8,9 +8,9 @@ Kolmogorov–Arnold Networks Reimplementation
 ### Mathematical Foundations
 - [X] Implement B-spline basis functions
 - [X] Add unit tests for B-spline properties
-- [ ] Implement grid initialization and extension
+- [ ] Implement grid initialization and extension (TODO LATER)
 - [ ] Test grid boundary handling
-- [ ] Plot B-spline basis functions to verify correctness
+- [X] Plot B-spline basis functions to verify correctness
 
 ### Core Layer
 - [ ] Implement basic KANLayer (forward pass only)
