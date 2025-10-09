@@ -1,6 +1,7 @@
+import matplotlib
 import numpy as np
 
-from src.kanet.core.bspline import BSplineBasis
+from kanet.core.bspline import BSplineBasis
 
 # Nice website to visualize and understand B-Splines:
 # https://www.desmos.com/calculator/ql6jqgdabs
@@ -113,3 +114,14 @@ def test_oob():
     assert np.allclose(
         basis_vector, expected
     ), f"Expected {expected}, got {basis_vector}"
+
+
+# Visualisation Test
+def test_visualization():
+    # Test the .visualize() method
+    matplotlib.use("Agg")  # Use a non-interactive backend
+    degree = 3
+    knots = [0, 0, 0, 0, 1, 2, 3, 3, 3, 3]
+    spline = BSplineBasis(knots, degree)
+    # Run visualization without displaying plot
+    spline.visualize(n_points=100)  # Just ensure it runs without error

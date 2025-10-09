@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import numpy as np
 
 
@@ -60,3 +61,53 @@ class BSplineBasis:
             ]
         )
         return basis_values
+
+    def visualize(self, n_points=200):
+        # Define the domain for plotting
+        x_min = self.knots[self.degree]
+        x_max = self.knots[self.n]
+        x_values = np.linspace(x_min, x_max, n_points)
+
+        # Evaluate all basis functions across the entire domain
+        basis_values_matrix = np.array([self.evaluate(x) for x in x_values])
+
+        plt.figure(figsize=(12, 7))
+
+        # Plot individual basis functions
+        for i in range(self.n):
+            plt.plot(
+                x_values,
+                basis_values_matrix[:, i],
+                label=f"$B_{{{i},{self.degree}}}(x)$",
+                alpha=0.7,
+            )
+
+        # Plot the "unity curve"
+        sum_of_basis = np.sum(basis_values_matrix, axis=1)
+        plt.plot(
+            x_values,
+            sum_of_basis,
+            label="Sum of Basis (Partition of Unity)",
+            color="black",
+            linestyle="--",
+            linewidth=2.5,
+        )
+        plt.title(f"B-spline Basis Functions (degree={self.degree})", fontsize=16)
+
+        unique_knots = np.unique(self.knots)
+        plt.vlines(
+            unique_knots,
+            ymin=0,
+            ymax=1.1,
+            color="gray",
+            linestyle=":",
+            linewidth=1.5,
+            label="Knots",
+        )
+        plt.xlabel("Position (x)", fontsize=12)
+        plt.ylabel("Value", fontsize=12)
+        plt.legend(loc="upper left", bbox_to_anchor=(1, 1))
+        plt.grid(True, linestyle="--", alpha=0.6)
+        plt.ylim(-0.1, 1.2)
+        plt.tight_layout()
+        plt.show()
