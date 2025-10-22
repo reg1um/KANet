@@ -8,14 +8,12 @@ Kolmogorov–Arnold Networks Reimplementation
 ### Mathematical Foundations
 - [X] Implement B-spline basis functions
 - [X] Add unit tests for B-spline properties
-- [ ] Implement grid initialization and extension (TODO LATER)
-- [ ] Test grid boundary handling
 - [X] Plot B-spline basis functions to verify correctness
 
 ### Core Layer
-- [ ] Implement basic KANLayer (forward pass only)
-- [ ] Add gradient flow tests (backward pass)
-- [ ] Integrate base activation (SiLU)
+- [X] Implement basic KANLayer (forward pass only)
+- [X] Add gradient flow tests (backward pass)
+- [X] Integrate base activation (SiLU)
 - [ ] Implement grid adaptation logic
 - [ ] Test layer can learn simple functions (x², sin(x))
 
@@ -38,7 +36,9 @@ Kolmogorov–Arnold Networks Reimplementation
 - [ ] Benchmark on standard datasets
 - [ ] Document usage and API
 
-### What's Next (needs more research...)
+### What's Next
+- [ ] Implement grid initialization and extension
+- [ ] Test grid boundary handling
 - [ ] Reproduce results from original KAN paper
 - [ ] Profile runtime and memory
 - [ ] Symbolic formula extraction
