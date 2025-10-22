@@ -18,6 +18,7 @@ class KANLayer(nn.Module):
         self.grid_min, self.grid_max = grid_range
 
         knots = torch.linspace(self.grid_min, self.grid_max, num_knots)
+        print("Knots:", knots)
         # Register knots as a buffer to ensure proper device management
         self.register_buffer("knots", knots)
 
@@ -28,7 +29,7 @@ class KANLayer(nn.Module):
         ]
 
         self.coeffs = nn.Parameter(
-            torch.randn(in_feat, out_feat, num_knots + degree - 1, dtype=torch.float32)
+            torch.randn(in_feat, out_feat, num_knots - degree - 1, dtype=torch.float32)
         )
 
         self.base_activation = nn.SiLU()
