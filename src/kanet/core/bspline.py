@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import torch
 
 
 def bspline_basis(knot_interval, position, knots_array, control_array, degree):
@@ -28,7 +29,7 @@ class BSplineBasis:
     """
 
     def __init__(self, knots, degree):
-        self.knots = np.asarray(knots)
+        self.knots = torch.asarray(knots)
         self.degree = degree
         self.n = len(knots) - degree - 1
 
@@ -38,17 +39,17 @@ class BSplineBasis:
             position < self.knots[self.degree]
             or position > self.knots[-self.degree - 1]
         ):
-            return np.zeros(self.n)
+            return torch.zeros(self.n)
 
         # Find the knot interval (index of the knot just before the position)
-        knot_interval = np.searchsorted(self.knots, position) - 1
+        knot_interval = torch.searchsorted(self.knots, position) - 1
         # Create an identity matrix for control points
         # Control points are the points that shape the B-spline
-        control_array = np.eye(self.n)
+        control_array = torch.eye(self.n)
 
         # Evaluate basis functions for each control point
         # (TODO: optimize later by batching)
-        basis_values = np.array(
+        basis_values = torch.tensor(
             [
                 bspline_basis(
                     knot_interval,
@@ -58,7 +59,8 @@ class BSplineBasis:
                     self.degree,
                 )
                 for i in range(self.n)
-            ]
+            ],
+            dtype=torch.float32,
         )
         return basis_values
 

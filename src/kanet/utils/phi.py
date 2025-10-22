@@ -8,8 +8,10 @@ def phi(x, bspline_basis, coeffs, base_activation, base_weights, verbose=False):
         print(f"phi({x.item():.4f})")
 
     # Go through the B-spline basis to get basis values at x
-    basis_eval = bspline_basis.evaluate(x.cpu().numpy())
-    basis_values = torch.from_numpy(basis_eval).to(dtype=torch.float32).to(x.device)
+    basis_eval = bspline_basis.evaluate(x.cpu())
+    basis_values = basis_eval.to(
+        x.device
+    )  # torch.from_numpy(basis_eval).to(dtype=torch.float32).to(x.device)
 
     if verbose:
         print(f"  basis values: {basis_values}")
