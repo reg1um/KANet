@@ -14,14 +14,14 @@ Kolmogorov–Arnold Networks Reimplementation
 - [X] Implement basic KANLayer (forward pass only)
 - [X] Add gradient flow tests (backward pass)
 - [X] Integrate base activation (SiLU)
-- [ ] Implement grid adaptation logic
-- [ ] Test layer can learn simple functions (x², sin(x))
+- [X] Implement grid adaptation logic
+- [X] Test layer can learn simple functions (x², sin(x))
 
 ### Network Architecture
-- [ ] Implement KANNetwork (stack multiple layers)
+- [X] Implement KANNetwork (stack multiple layers)
 - [ ] Test multi-layer forward/backward pass
-- [ ] Add proper weight initialization strategies
-- [ ] Implement grid update for entire network
+- [X] Add proper weight initialization strategies
+- [X] Implement grid update for entire network
 
 ### Training Infrastructure
 - [ ] Create KANTrainer with basic training loop
@@ -37,7 +37,7 @@ Kolmogorov–Arnold Networks Reimplementation
 - [ ] Document usage and API
 
 ### What's Next
-- [ ] Implement grid initialization and extension
+- [X] Implement grid initialization and extension
 - [ ] Test grid boundary handling
 - [ ] Reproduce results from original KAN paper
 - [ ] Profile runtime and memory
