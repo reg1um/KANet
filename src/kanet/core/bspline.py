@@ -1,8 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
+import torch.nn as nn
 
 
+# No longer used: Directly implemented in evaluate
 def bspline_basis(knot_interval, position, knots_array, control_array, degree):
     # deBoor algorithm to compute B-spline basis functions
     d = [control_array[j + knot_interval - degree] for j in range(degree + 1)]
@@ -18,7 +20,7 @@ def bspline_basis(knot_interval, position, knots_array, control_array, degree):
     return d[degree]
 
 
-class BSplineBasis:
+class BSplineBasis(nn.Module):
     """
     Args:
         knots: knots defines the separation of the B-spline segments
@@ -29,40 +31,90 @@ class BSplineBasis:
     """
 
     def __init__(self, knots, degree):
-        self.knots = torch.asarray(knots)
+        super().__init__()
+        self.register_buffer("knots", torch.as_tensor(knots, dtype=torch.float32))
         self.degree = degree
         self.n = len(knots) - degree - 1
 
     def evaluate(self, position):
-        # If position is outside the valid range, return zero basis functions
-        if (
-            position < self.knots[self.degree]
-            or position > self.knots[-self.degree - 1]
-        ):
-            return torch.zeros(self.n)
+        # position: scalar, 1-D tensor (B,), or any array-like
+        x = torch.as_tensor(
+            position, dtype=self.knots.dtype, device=self.knots.device
+        ).view(-1)  # (B,)
+        B = x.new_zeros(x.shape[0], self.n)  # (B, n)
+
+        # Initialize degree 0 basis functions
+        for i in range(self.n):
+            t_i = self.knots[i]
+            t_ip1 = self.knots[i + 1]
+            if i < self.n - 1:
+                mask = (x >= t_i) & (x < t_ip1)
+            else:
+                # include the right end for the last basis
+                mask = (x >= t_i) & (x <= t_ip1)
+            B[:, i] = mask.to(B.dtype)
+
+        # Recurrence to degree p (Cox - deBoor)
+        for p in range(1, self.degree + 1):
+            Bp = x.new_zeros(x.shape[0], self.n)
+            for i in range(self.n):
+                # Left term
+                denom_left = self.knots[i + p] - self.knots[i]
+                left = 0.0
+                if denom_left > 0:
+                    left = ((x - self.knots[i]) / denom_left) * B[:, i]
+
+                # Right term
+                right = 0.0
+                if i + 1 < self.n:
+                    denom_right = self.knots[i + p + 1] - self.knots[i + 1]
+                    if denom_right > 0:
+                        right = ((self.knots[i + p + 1] - x) / denom_right) * B[
+                            :, i + 1
+                        ]
+
+                Bp[:, i] = left + right
+            B = Bp
+
+        return B
+
+    """
+    def evaluate(self, position):
+
+        batch_size = position.shape[0]
+
 
         # Find the knot interval (index of the knot just before the position)
-        knot_interval = torch.searchsorted(self.knots, position) - 1
+        knot_interval = torch.searchsorted(self.knots, position, right=True) - 1
+        knot_interval = torch.clamp(knot_interval, self.degree, self.n - 1)
+
+        basis_values = torch.zeros((batch_size, self.n), device=position.device)
+
         # Create an identity matrix for control points
         # Control points are the points that shape the B-spline
-        control_array = torch.eye(self.n)
+        control_array = torch.eye(self.n, device=position.device)
 
         # Evaluate basis functions for each control point
         # (TODO: optimize later by batching)
-        basis_values = torch.tensor(
-            [
-                bspline_basis(
-                    knot_interval,
-                    position,
+
+
+        for i in range(self.n):
+            for b in range(batch_size):
+                if (
+                    position[b] < self.knots[self.degree]
+                    or position[b] > self.knots[self.n]
+                ):
+                    continue
+
+                basis_values[b, i] = bspline_basis(
+                    knot_interval[b],
+                    position[b].item(),
                     self.knots,
                     control_array[:, i],
                     self.degree,
                 )
-                for i in range(self.n)
-            ],
-            dtype=torch.float32,
-        )
         return basis_values
+        """
 
     def visualize(self, n_points=200):
         # Define the domain for plotting
