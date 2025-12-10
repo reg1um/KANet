@@ -45,6 +45,10 @@ class KANLayer(nn.Module):
         )
         nn.init.xavier_uniform_(self.base_weights)
 
+        # For pruning: track which neurons are active
+        self._input_mask = None  # Mask for input features
+        self._output_mask = None  # Mask for output features
+
     def forward(self, x):
         if x.dim() == 1:
             x = x.unsqueeze(0)  # Make it (1, in_feat)
@@ -64,6 +68,35 @@ class KANLayer(nn.Module):
                 )
 
         return output
+
+    def get_activations(self, x):
+        """
+        Get individual activations WITHOUT summing over inputs.
+        Used for computing edge importance scores for pruning.
+
+        Returns:
+            Tensor of shape (batch_size, in_feat, out_feat) containing
+            individual activation values for each edge.
+        """
+        if x.dim() == 1:
+            x = x.unsqueeze(0)
+
+        batch_size = x.shape[0]
+        activations = torch.zeros(
+            batch_size, self.in_feat, self.out_feat, device=x.device
+        )
+
+        for i in range(self.out_feat):
+            for j in range(self.in_feat):
+                activations[:, j, i] = phi(
+                    x[:, j],
+                    self.bspline_array[j][i],
+                    self.coeffs[j, i],
+                    self.base_activation,
+                    self.base_weights[j, i],
+                )
+
+        return activations
 
     def set_uniform_knots(self, num_knots, grid_min, grid_max, degree):
         # Create uniform knots with clamping at the ends
@@ -236,7 +269,7 @@ class KANLayer(nn.Module):
         )
 
         print(
-            f"Grid widening completed. New number of knots: \
-                {self.num_knots - self.degree*2 - 1}, basis functions: {new_num_basis}"
+            "Grid widening completed. New number of knots: "
+            f"{self.num_knots - self.degree * 2 - 1}, basis functions: {new_num_basis}"
         )
         print(f"New grid range: ({self.knots[0].item()}, {self.knots[-1].item()})")
