@@ -405,7 +405,7 @@ class KANPruner:
             f"gap after top {best_gap_idx + 1} nodes"
         )
 
-        return threshold
+        return float(threshold)
 
     def get_layer_widths(self) -> list[int]:
         """Get the width of each layer in the network."""

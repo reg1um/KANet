@@ -241,7 +241,7 @@ def plot_activation_functions(
     layer_idx: int,
     input_range: tuple[float, float] = (-1, 1),
     n_points: int = 200,
-    figsize: tuple[int, int] | None = None,
+    figsize: tuple[float, float] | None = None,
     title: str | None = None,
     pruning_mask: dict[int, torch.Tensor] | None = None,
 ) -> Figure:
@@ -367,8 +367,8 @@ def plot_all_activations(
         n_active_out = len(active_nodes[layer_idx + 1])
 
         figsize = (
-            figsize_per_cell[0] * max(n_active_out, 1),
-            figsize_per_cell[1] * max(n_active_in, 1),
+            float(figsize_per_cell[0] * max(n_active_out, 1)),
+            float(figsize_per_cell[1] * max(n_active_in, 1)),
         )
         fig = plot_activation_functions(
             model,
